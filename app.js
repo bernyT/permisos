@@ -1,6 +1,11 @@
 var express = require('express'),
 	app = express(),
-	swig = require('swig');
+	swig = require('swig'),
+	io = require('socket.io').listen(app.listen(3000, function () {
+		var host = '192.168.1.99';
+		console.log('Aplicacion escuchando %s',host);
+	}));
+
 const fs = require('fs');
 	
 //Configuracion
@@ -22,13 +27,24 @@ app.get('/', function (req, res) {
 				}
 			});
 		});
-		
 		//permiso 777 es igual a mode =33279,
 		//console.log(files);
 		res.render('permisos', {archivos : files});	
 	});
 });
 
+//Recivo señal de conexion
+io.sockets.on('connection', function(socket) {
+
+	//Recivo señal de "change"
+	socket.on('change', function(archivo) {
+		console.log(archivo);
+		fs.chmod(archivo['nombre'], 0777);
+	});
+});
+
+/*
+CUNADO NO SE USABA SOCKET.IO
 var server = app.listen(3000, function () {
 
   var host = '192.168.1.99'
@@ -36,4 +52,4 @@ var server = app.listen(3000, function () {
 
   console.log('Example app listening at http://%s:%s', host, port)
 
-})
+})*/

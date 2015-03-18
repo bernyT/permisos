@@ -1,12 +1,15 @@
 $(function () {
-	/*$("#tablaArchivos tbody tr butto").on("click", function(){
-		console.log( $( this ).parent() );
-	});*/
+	//Imicio conexion socket.io
+	window.io = io.connect();
 
-	$("#tablaArchivos tbody tr").each( function(){
-		$(this button).on( "click",funtion(){
-			console.log( $( this ) );
-		});
-		
+	$("#tablaArchivos tbody tr td button").on("click", function(){
+		var archivo = $(this).data('archivo');
+		//Emito señal de cambio de permisos
+		io.emit('change',{nombre: archivo, habilitarPermisos: true});
 	});
+
+	//Emito señal de conexion
+	io.on('connect', function(){
+    	console.log('Connected to server');
+  	});
 });

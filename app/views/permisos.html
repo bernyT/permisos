@@ -7,7 +7,7 @@
 	<h1>Permisos de Archivos</h1>
 	<div class="row">
 		<div class="col-xs-6 col-xs-offset-3">
-			<table class="table table-hover table-bordered">
+			<table id="tablaArchivos" class="table table-hover table-bordered">
 				<thead>
 				<tr>
 					<td>Path</td>
@@ -19,7 +19,7 @@
 					{% for archivo in archivos %}
 						<tr>
 							<td><p>{{archivo}}</p></td>
-							<td><button class="btn btn-success">Permitir</button> </td>
+							<td><button data-archivo={{archivo}} class="btn btn-success">Permitir</button> </td>
 						</tr>
 					{% endfor %}
 				</tr>
@@ -29,7 +29,8 @@
   	</div>
 </div>
 <link href="css/bootstrap.min.css" rel="stylesheet">
+<script type="text/javascript" src="js/socket.io.js"></script>
 <script src="js/jquery-2.1.3.min.js"></script>
-
+<script type="text/javascript" src="js/permisos.js"></script>
 {% endblock %}
 
