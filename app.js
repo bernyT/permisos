@@ -5,7 +5,6 @@ var express = require('express'),
 		var host = '192.168.1.99';
 		console.log('Aplicacion escuchando %s',host);
 	}));
-
 const fs = require('fs');
 	
 //Configuracion
@@ -25,6 +24,9 @@ app.get('/', function (req, res) {
 				if (stats['mode'] === 33279) {
 					console.log(file+' '+stats['mode']);
 				}
+				else {
+					console.log(file + ' ' + 'permiso denegado');
+				}
 			});
 		});
 		//permiso 777 es igual a mode =33279,
@@ -35,7 +37,6 @@ app.get('/', function (req, res) {
 
 //Recivo señal de conexion
 io.sockets.on('connection', function(socket) {
-
 	//Recivo señal de "change"
 	socket.on('change', function(archivo) {
 		console.log(archivo);
