@@ -6,7 +6,9 @@ var express = require('express'),
 		console.log('Aplicacion escuchando %s',host);
 	}));
 const fs = require('fs');
-	
+var async = require("async");
+
+
 //Configuracion
 // View engine
 app.engine('html', swig.renderFile );
@@ -15,24 +17,58 @@ app.set('views', './app/views');
 
 app.use( express.static('./public') );
 
+
+
 app.get('/', function (req, res) {
 	path = __dirname;
 
-	fs.readdir(path, function(error, files) {
-		files.forEach(function(file) {
-			fs.stat(file, function(error, stats) {
-				if (stats['mode'] === 33279) {
-					console.log(file+' '+stats['mode']);
-				}
-				else {
-					console.log(file + ' ' + 'permiso denegado');
-				}
+	var archivo = function (nombre, permiso, css, texto) { 
+		this.nombre = nombre;
+		this.permiso = permiso; 
+		this.classCss = css;
+		this.texto = texto;
+	};
+
+	async.waterfall([
+		function(callback){
+			fs.readdir(path, callback)
+		},
+		function(files, callback) {
+			var archivos = new Array;
+			files.forEach(function(file) {
+				var a1 = new archivo();
+				fs.stat(file, function(error, stats) {
+					a1.nombre = file;
+					if (stats['mode'] === 33279) {
+						a1.permiso = true;
+						a1.classCss = 'btn btn-success';
+						a1.texto = "Permitir";
+						console.log(file+' '+stats['mode']);
+					}
+					else {
+						a1.permiso = false;
+						a1.classCss = 'btn  btn-danger';
+						a1.texto = "Denegar";
+						console.log(file + ' ' + 'permiso denegado');
+					}
+
+					archivos.push(a1);
+				});
 			});
+
+			callback(null, archivos);
+		},
+		function (files, callback) {
+			callback(null,files);
+		}
+		], function(error, files) {
+			//console.log('files '+files);
+			res.render('permisos', {archivos : files});		
 		});
+				
+		//console.log("ARCHIVOS "+archivos[0]);
 		//permiso 777 es igual a mode =33279,
 		//console.log(files);
-		res.render('permisos', {archivos : files});	
-	});
 });
 
 //Recivo señal de conexion

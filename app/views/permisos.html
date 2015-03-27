@@ -18,8 +18,8 @@
 				<tr>
 					{% for archivo in archivos %}
 						<tr>
-							<td><p>{{archivo}}</p></td>
-							<td><button data-archivo={{archivo}} data-acceso="true" class="btn btn-success">Permitir</button> </td>
+							<td><p>{{archivo.nombre}}</p></td>
+							<td><button data-archivo={{archivo.nombre}} data-acceso={{archivo.permiso}} class={{archivo.classCss}}>{{archivo.texto}}</button> </td>
 						</tr>
 					{% endfor %}
 				</tr>
