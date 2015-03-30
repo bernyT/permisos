@@ -2,6 +2,7 @@ $(function () {
 	//Imicio conexion socket.io
 	window.io = io.connect();
 
+
 	//Establecer CSS y label de los botones
 	$("#tablaArchivos tbody tr td button").each(function() {
 		if($(this).data('acceso') === false) {
@@ -12,6 +13,11 @@ $(function () {
 			$(this).addClass( "btn btn-success" );
 			//$(this).text('Permitir');
 		}
+	});
+
+	$("#tablaArchivos tbody tr td img").on("click", function(){
+		$(this).parent().append("<p>directorio</p>");
+		console.log($(this).parent());
 	});
 
 	$("#tablaArchivos tbody tr td button").on("click", function(){

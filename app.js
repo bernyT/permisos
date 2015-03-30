@@ -2,7 +2,7 @@ var express = require('express'),
 	app = express(),
 	swig = require('swig'),
 	io = require('socket.io').listen(app.listen(3000, function () {
-		var host = '192.168.1.99';
+		var host = '127.0.0.1';
 		console.log('Aplicacion escuchando %s',host);
 	}));
 const fs = require('fs');
@@ -22,7 +22,7 @@ app.use( express.static('./public') );
 app.get('/', function (req, res) {
 	path = __dirname;
 
-	var archivo = function (nombre, etiqueta, permiso, texto, directorio) { 
+	var archivo = function (nombre, etiqueta, permiso, directorio) { 
 		this.nombre = nombre;
 		this.etiqueta = etiqueta;
 		this.permiso = permiso; 
@@ -57,7 +57,6 @@ app.get('/', function (req, res) {
 							a1 = new archivo(file, 'Dir. Permitir', true, true);
 						}
 					}
-					
 					archivos.push(a1);
 				});
 			});
@@ -68,7 +67,6 @@ app.get('/', function (req, res) {
 			callback(null,files);
 		}
 		], function(error, files) {
-			//console.log('files '+files);
 			res.render('permisos', {archivos : files});		
 		});
 				

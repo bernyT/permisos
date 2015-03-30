@@ -18,7 +18,12 @@
 				<tr>
 					{% for archivo in archivos %}
 						<tr>
-							<td><p>{{archivo.nombre}}</p></td>
+							<td>
+									{%if archivo.directorio %}
+										<img class="pull-left" src="img/arrow.png" alt="flecha" height="15" width="15">
+									{% endif %}
+									<p class="text-center">{{archivo.nombre}}</p>
+							</td>
 							<td><button data-archivo={{archivo.nombre}} data-acceso={{archivo.permiso}}>{{archivo.etiqueta}}</button> </td>
 						</tr>
 					{% endfor %}
