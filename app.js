@@ -22,11 +22,11 @@ app.use( express.static('./public') );
 app.get('/', function (req, res) {
 	path = __dirname;
 
-	var archivo = function (nombre, permiso, css, texto) { 
+	var archivo = function (nombre, etiqueta, permiso, texto, directorio) { 
 		this.nombre = nombre;
+		this.etiqueta = etiqueta;
 		this.permiso = permiso; 
-		this.classCss = css;
-		this.texto = texto;
+		this.directorio = directorio;
 	};
 
 	async.waterfall([
@@ -35,23 +35,29 @@ app.get('/', function (req, res) {
 		},
 		function(files, callback) {
 			var archivos = new Array;
+			
 			files.forEach(function(file) {
-				var a1 = new archivo();
+				var a1;
 				fs.stat(file, function(error, stats) {
-					a1.nombre = file;
-					if (stats['mode'] === 33279) {
-						a1.permiso = true;
-						a1.classCss = 'btn btn-success';
-						a1.texto = "Permitir";
-						console.log(file+' '+stats['mode']);
+					if(stats.isFile()) {						
+						//El permiso de lectura y escritura de "otros"
+						if ((stats['mode'] & 2) && (stats['mode'] & 4)) {
+							a1 = new archivo(file, 'Denegar', false, false);
+							console.log(file);
+						}
+						else {
+							a1 = new archivo(file, 'Permitir', true, false);
+						}
 					}
-					else {
-						a1.permiso = false;
-						a1.classCss = 'btn  btn-danger';
-						a1.texto = "Denegar";
-						console.log(file + ' ' + 'permiso denegado');
+					else if(stats.isDirectory()) {
+						if ((stats['mode'] & 2) && (stats['mode'] & 4)) {
+							a1 = new archivo(file, 'Dir. Denegar', false, true);
+						}
+						else {
+							a1 = new archivo(file, 'Dir. Permitir', true, true);
+						}
 					}
-
+					
 					archivos.push(a1);
 				});
 			});
@@ -75,8 +81,14 @@ app.get('/', function (req, res) {
 io.sockets.on('connection', function(socket) {
 	//Recivo señal de "change"
 	socket.on('change', function(archivo) {
-		console.log(archivo);
-		fs.chmod(archivo['nombre'], 0777);
+		if(!archivo['habilitarPermisos']) {
+			console.log('change 777'+archivo);
+			fs.chmod(archivo['nombre'], 0777);
+		}
+		else {
+			console.log('change 700'+archivo);
+			fs.chmod(archivo['nombre'], 0700);
+		}
 	});
 });
 
